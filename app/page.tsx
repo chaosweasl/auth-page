@@ -1,7 +1,7 @@
 import React from "react";
 
 function AuthPage() {
-  return <div>Welcome to authpage!</div>;
+  return <div>adasdjsajtwjf</div>;
 }
 
 export default AuthPage;
