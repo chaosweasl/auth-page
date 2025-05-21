@@ -1,5 +1,6 @@
 "use client";
 
+import { handleSignIn } from "@/utils/supabase/auth";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -11,7 +12,7 @@ function AuthSignIn() {
   return (
     <>
       {error && (
-        <div role="alert" className="alert alert-warning">
+        <div role="alert" className="alert alert-warning mt-10">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 shrink-0 stroke-current"
@@ -51,14 +52,13 @@ function AuthSignIn() {
         <button
           className="btn btn-neutral mt-4"
           onClick={async () => {
-            const result = await handleInputData(email, password, error);
+            const result = await handleSignIn(email);
             if (typeof result === "string") {
               setError(result);
             } else {
               // Handle successful authentication
               setError("");
               console.log("Authentication successful", result);
-              // Add your authentication logic here (e.g., API call, redirect)
             }
           }}
         >

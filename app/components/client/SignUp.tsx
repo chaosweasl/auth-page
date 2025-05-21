@@ -87,6 +87,9 @@ function SignUp() {
             } else {
               setError("");
               console.log("Authentication successful", result);
+              setMessage(
+                "Sign up successful. Please check your email for verification."
+              );
             }
           }}
         >

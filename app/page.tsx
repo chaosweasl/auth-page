@@ -1,5 +1,6 @@
 import React from "react";
-function AuthPage() {
+
+function Page() {
   return (
     <>
       <div>dasfudfajfidsbjsaifgj</div>
@@ -7,4 +8,4 @@ function AuthPage() {
   );
 }
 
-export default AuthPage;
+export default Page;
