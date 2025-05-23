@@ -3,6 +3,7 @@
 import { handleSignIn } from "@/utils/supabase/auth";
 import Link from "next/link";
 import { useState } from "react";
+import { redirect } from "next/navigation";
 
 function AuthSignIn() {
   const [email, setEmail] = useState("");
@@ -59,6 +60,7 @@ function AuthSignIn() {
               // Handle successful authentication
               setError("");
               console.log("Authentication successful", result);
+              redirect("/");
             }
           }}
         >
