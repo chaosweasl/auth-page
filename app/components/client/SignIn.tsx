@@ -2,11 +2,9 @@
 
 import { createBrowserClient } from "@supabase/ssr";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 function AuthSignIn() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

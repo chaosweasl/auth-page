@@ -1,8 +1,24 @@
 "use client";
 
-import { handleSignUp } from "@/app/utils/supabase/auth";
-import React from "react";
-import { useState } from "react";
+import { createBrowserClient } from "@supabase/ssr";
+import Link from "next/link";
+import React, { useState } from "react";
+
+async function handleSignUp(username: string, email: string, password: string) {
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { username } },
+  });
+
+  if (error) return error.message;
+  return data;
+}
 
 function AuthSignUp() {
   const [email, setEmail] = useState("");
@@ -10,9 +26,52 @@ function AuthSignUp() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setMessage("");
+
+    if (!username || !email || !password) {
+      setError("Please fill in all fields");
+      setIsLoading(false);
+      return;
+    }
+
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email)) {
+      setError("Please enter a valid email");
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      setIsLoading(false);
+      return;
+    }
+
+    if (username.length < 3) {
+      setError("Username must be at least 3 characters long");
+      setIsLoading(false);
+      return;
+    }
+
+    const result = await handleSignUp(username, email, password);
+    if (typeof result === "string") {
+      setError(result);
+    } else {
+      setMessage(
+        "Sign up successful. Please check your email for verification."
+      );
+    }
+    setIsLoading(false);
+  };
 
   return (
-    <>
+    <form onSubmit={handleSubmit} className="space-y-4">
       {message && (
         <div role="alert" className="alert alert-info">
           <svg
@@ -31,7 +90,6 @@ function AuthSignUp() {
           <span>{message}</span>
         </div>
       )}
-
       {error && (
         <div role="alert" className="alert alert-warning">
           <svg
@@ -50,53 +108,67 @@ function AuthSignUp() {
           <span>{error}</span>
         </div>
       )}
+      <fieldset className="space-y-4">
+        <legend className="text-xl font-bold">Sign Up</legend>
 
-      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-        <legend className="fieldset-legend">Sign Up</legend>
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Username</span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered w-full"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
 
-        <label className="label">Username</label>
-        <input
-          type="text"
-          className="input"
-          placeholder="Username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Email</span>
+          </label>
+          <input
+            type="email"
+            className="input input-bordered w-full"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
-        <label className="label">Email</label>
-        <input
-          type="email"
-          className="input"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <label className="label">Password</label>
-        <input
-          type="password"
-          className="input"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Password</span>
+          </label>
+          <input
+            type="password"
+            className="input input-bordered w-full"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
         <button
-          className="btn btn-neutral mt-4"
-          onClick={async () => {
-            const result = await handleSignUp(username, email, password);
-            if (typeof result === "string") {
-              setError(result);
-            } else {
-              setError("");
-              console.log("Authentication successful", result);
-              setMessage(
-                "Sign up successful. Please check your email for verification."
-              );
-            }
-          }}
+          type="submit"
+          className="btn btn-primary w-full"
+          disabled={isLoading}
         >
-          Sign Up
+          {isLoading ? "Signing up..." : "Sign Up"}
         </button>
       </fieldset>
-    </>
+      <div className="text-center space-y-2">
+        <p>Already have an account?</p>
+        <Link href="/sign-in" className="btn btn-outline">
+          Sign in
+        </Link>
+      </div>
+      X
+    </form>
   );
 }
 

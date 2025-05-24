@@ -3,11 +3,9 @@
 import { createBrowserClient } from "@supabase/ssr";
 import { UserRound } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 function NavBar() {
-  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
