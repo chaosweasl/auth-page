@@ -1,6 +1,6 @@
 "use client";
 
-import { handleSignOut, getCurrentUser } from "@/app/utils/supabase/auth";
+import { createBrowserClient } from "@supabase/ssr";
 import { UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,29 +12,64 @@ function NavBar() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     const checkUser = async () => {
       console.log("Checking current user...");
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-      setIsLoading(false);
-      if (currentUser) {
-        console.log("User is authenticated:", { email: currentUser.email });
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error("Session error:", error.message);
+        setUser(null);
+      } else if (session) {
+        console.log("User is authenticated:", {
+          email: session.user.email,
+          userId: session.user.id,
+          expiresAt: session.expires_at,
+        });
+        setUser(session.user);
       } else {
         console.log("No authenticated user found");
+        setUser(null);
       }
+      setIsLoading(false);
     };
+
     checkUser();
+
+    // Set up auth state change listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed:", event, session?.user?.email);
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleSignOutClick = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     console.log("Attempting to sign out...");
-    const error = await handleSignOut();
+    const { error } = await supabase.auth.signOut();
     if (!error) {
       console.log("Sign out successful, redirecting to sign in...");
-      router.push("/sign-in");
-      router.refresh();
+      // Force a hard navigation to ensure the middleware picks up the session change
+      window.location.href = "/sign-in";
     } else {
-      console.error("Sign out failed:", error);
+      console.error("Sign out failed:", error.message);
     }
   };
 

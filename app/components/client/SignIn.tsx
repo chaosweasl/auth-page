@@ -1,6 +1,6 @@
 "use client";
 
-import { handleSignIn } from "@/app/utils/supabase/auth";
+import { createBrowserClient } from "@supabase/ssr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,17 +17,44 @@ function AuthSignIn() {
     setIsLoading(true);
     setError("");
 
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     console.log("Attempting sign in for:", email);
-    const result = await handleSignIn(email, password);
-    if (typeof result === "string") {
-      console.error("Sign in failed:", result);
-      setError(result);
-    } else {
-      console.log("Sign in successful, redirecting to home...");
-      router.push("/");
-      router.refresh();
+    const { data, error: signInError } = await supabase.auth.signInWithPassword(
+      {
+        email,
+        password,
+      }
+    );
+
+    if (signInError) {
+      console.error("Sign in failed:", signInError.message);
+      setError(signInError.message);
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    if (data.session) {
+      console.log("Sign in successful:", {
+        userId: data.user.id,
+        email: data.user.email,
+        accessToken: data.session.access_token ? "present" : "missing",
+        refreshToken: data.session.refresh_token ? "present" : "missing",
+      });
+
+      // Wait a moment to ensure the session is properly set
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Force a hard navigation to ensure the middleware picks up the new session
+      window.location.href = "/";
+    } else {
+      console.error("Sign in succeeded but no session was returned");
+      setError("Authentication failed - no session created");
+      setIsLoading(false);
+    }
   };
 
   return (
