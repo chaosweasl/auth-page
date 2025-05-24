@@ -1,10 +1,10 @@
 "use client";
 
-import { handleSignUp } from "@/utils/supabase/auth";
+import { handleSignUp } from "@/app/utils/supabase/auth";
 import React from "react";
 import { useState } from "react";
 
-function SignUp() {
+function AuthSignUp() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -81,7 +81,7 @@ function SignUp() {
         <button
           className="btn btn-neutral mt-4"
           onClick={async () => {
-            const result = await handleSignUp(username, email, password, error);
+            const result = await handleSignUp(username, email, password);
             if (typeof result === "string") {
               setError(result);
             } else {
@@ -100,4 +100,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default AuthSignUp;

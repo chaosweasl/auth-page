@@ -1,17 +1,37 @@
 "use client";
 
-import { handleSignIn } from "@/utils/supabase/auth";
+import { handleSignIn } from "@/app/utils/supabase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { redirect } from "next/navigation";
 
 function AuthSignIn() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    console.log("Attempting sign in for:", email);
+    const result = await handleSignIn(email, password);
+    if (typeof result === "string") {
+      console.error("Sign in failed:", result);
+      setError(result);
+    } else {
+      console.log("Sign in successful, redirecting to home...");
+      router.push("/");
+      router.refresh();
+    }
+    setIsLoading(false);
+  };
 
   return (
-    <>
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
         <div role="alert" className="alert alert-warning">
           <svg
@@ -31,50 +51,53 @@ function AuthSignIn() {
         </div>
       )}
 
-      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
-        <legend className="fieldset-legend">Login</legend>
+      <fieldset className="space-y-4">
+        <legend className="text-xl font-bold">Login</legend>
 
-        <label className="label">Email</label>
-        <input
-          type="email"
-          className="input"
-          placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Email</span>
+          </label>
+          <input
+            type="email"
+            className="input input-bordered w-full"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
-        <label className="label">Password</label>
-        <input
-          type="password"
-          className="input"
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Password</span>
+          </label>
+          <input
+            type="password"
+            className="input input-bordered w-full"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
         <button
-          className="btn btn-neutral mt-4"
-          onClick={async () => {
-            const result = await handleSignIn(email);
-            if (typeof result === "string") {
-              setError(result);
-            } else {
-              // Handle successful authentication
-              setError("");
-              console.log("Authentication successful", result);
-              redirect("/");
-            }
-          }}
+          type="submit"
+          className="btn btn-primary w-full"
+          disabled={isLoading}
         >
-          Login
+          {isLoading ? "Signing in..." : "Sign In"}
         </button>
       </fieldset>
 
-      <div>
-        <h1>Don't have an account? Sign up instead</h1>
-        <button className="btn btn-neutral">
-          <Link href="/sign-up">Sign up</Link>
-        </button>
+      <div className="text-center space-y-2">
+        <p>Don't have an account?</p>
+        <Link href="/sign-up" className="btn btn-outline">
+          Sign up
+        </Link>
       </div>
-    </>
+    </form>
   );
 }
 

@@ -1,8 +1,8 @@
 import React from "react";
-import SignUp from "@/app/components/client/SignUp";
+import AuthSignUp from "@/app/components/client/SignUp";
 
 function SignUpPage() {
-  return <SignUp />;
+  return <AuthSignUp />;
 }
 
 export default SignUpPage;
