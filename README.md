@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Authentication Demo
 
-## Getting Started
+A modern authentication implementation using Next.js 14, Supabase Auth, and TailwindCSS. This project demonstrates secure user management and protected routes in a React application.
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Secure Authentication** using Supabase Auth
+- **Protected Routes** with Next.js Middleware
+- **TypeScript** for type safety
+- **Modern React Patterns** including React Server Components
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 14
+- TypeScript
+- Supabase Auth
+- TailwindCSS
+- DaisyUI
+- React 19
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔒 Security Features
 
-## Learn More
+- Middleware-based route protection
+- Secure session management
 
-To learn more about Next.js, take a look at the following resources:
+## What I learned from this project
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- How to handle authentication flows in Next.js 14 using Supabase Auth
+- Implementation of protected routes using Next.js middleware
+- Managing user sessions and auth state with React hooks
+- Type-safe development with TypeScript in a Next.js environment
+- Working with environment variables in a secure manner
+- Implementing social authentication providers
+- Proper error handling in authentication flows
+- Building reusable React components with authentication context
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## What else I'd like to add
 
-## Deploy on Vercel
+- A way to upload a profile picture to the database.
+- Implement responsive design (it's the least I can do even though it's a backend only project)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Disclaimer
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+There is a chance that the authentication won't work. This is because I have to revisit supabase and ask them to unpause my database, since it pauses if it's been inactive for a while (since I'm using free-tier lol). Please keep this in mind.
