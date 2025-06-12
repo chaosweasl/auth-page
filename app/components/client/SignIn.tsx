@@ -46,7 +46,7 @@ function AuthSignIn() {
       // Wait a moment to ensure the session is properly set
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // Force a hard navigation to ensure the middleware picks up the new session
+      // Force a hard navigation to ensure the middleware picks up the new sessio
       window.location.href = "/";
     } else {
       console.error("Sign in succeeded but no session was returned");
