@@ -117,7 +117,7 @@ function AuthSignIn() {
       </fieldset>
 
       <div className="text-center space-y-2">
-        <p>Don't have an account?</p>
+        <p>Don&apos;t have an account?</p>
         <Link href="/sign-up" className="btn btn-outline">
           Sign up
         </Link>
